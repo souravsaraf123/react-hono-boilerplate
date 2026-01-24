@@ -1,0 +1,43 @@
+{
+	"name": "api",
+	"version": "1.0.0",
+	"description": "",
+	"scripts": {
+		"start": "tsx watch src/index.ts",
+		"format": "prettier src/**/*.{ts,tsx,js,jsx,json,css,scss,html} --write",
+		"compile": "tsc --noEmit",
+		"db": "drizzle-kit",
+		"db:push": "npm run db push",
+		"db:dropTables": "npx tsx src/db/dropTables.ts",
+		"db:migrate": "npm run db migrate",
+		"db:generate": "npm run db generate",
+		"db:studio": "npm run db studio",
+		"seedDatabase": "bash ./src/scripts/setup.sh"
+	},
+	"type": "module",
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"@types/node": "^25.0.10",
+		"@types/pg": "^8.16.0",
+		"drizzle-kit": "^0.31.8",
+		"prettier": "^3.8.1",
+		"prettier-plugin-brace-style": "^0.9.0",
+		"prettier-plugin-merge": "^0.9.0",
+		"prettier-plugin-sort-imports": "^1.8.9",
+		"prettier-plugin-tailwindcss": "^0.7.2",
+		"tsx": "^4.21.0",
+		"typescript": "^5.9.3"
+	},
+	"dependencies": {
+		"@hono/node-server": "^1.19.9",
+		"@hono/zod-validator": "^0.7.6",
+		"dotenv": "^17.2.3",
+		"drizzle-orm": "^0.45.1",
+		"hono": "^4.11.5",
+		"hono-rate-limiter": "^0.5.3",
+		"pg": "^8.17.2",
+		"zod": "^4.3.6"
+	}
+}

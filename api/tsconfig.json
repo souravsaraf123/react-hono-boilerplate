@@ -1,0 +1,34 @@
+{
+	"compilerOptions": {
+		/* Base Options: */
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"target": "esnext",
+		"allowJs": true,
+		"resolveJsonModule": true,
+		"moduleDetection": "force",
+		"isolatedModules": true,
+		"jsx": "react-jsx",
+
+		/* Strictness */
+		"strict": true,
+		"noImplicitOverride": true,
+		"noUncheckedIndexedAccess": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUncheckedSideEffectImports": true,
+
+		/* If NOT transpiling with TypeScript: */
+		"module": "preserve",
+		"noEmit": true,
+
+		/* If your code doesn't run in the DOM: */
+		"lib": ["ESNext"],
+
+		/* Paths & Aliases */
+		"baseUrl": ".",
+		"paths": {
+			"@api/*": ["./src/*"],
+			"@shared/*": ["./src/shared/*"]
+		}
+	}
+}

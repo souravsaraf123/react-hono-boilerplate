@@ -14,7 +14,7 @@ export const Route = createRootRouteWithContext()({
 	head: () => ({
 		meta: [
 			{
-				title: 'Map Ranks - Dashboard',
+				title: 'Boilerplate',
 			},
 		],
 	}),

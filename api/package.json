@@ -6,6 +6,7 @@
 		"start": "tsx watch src/index.ts",
 		"format": "prettier src/**/*.{ts,tsx,js,jsx,json,css,scss,html} --write",
 		"compile": "tsc --noEmit",
+		"test": "tsx --test --test-concurrency=1 src/test/*.test.ts",
 		"db": "drizzle-kit",
 		"db:push": "npm run db push",
 		"db:dropTables": "npx tsx src/db/dropTables.ts",

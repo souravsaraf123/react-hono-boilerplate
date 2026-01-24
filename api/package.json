@@ -18,7 +18,7 @@
 	"type": "module",
 	"keywords": [],
 	"author": "",
-	"license": "ISC",
+	"license": "MIT",
 	"devDependencies": {
 		"@types/node": "^25.0.10",
 		"@types/pg": "^8.16.0",

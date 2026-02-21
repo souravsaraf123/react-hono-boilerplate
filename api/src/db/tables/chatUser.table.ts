@@ -1,7 +1,7 @@
 import { pgTable, text } from 'drizzle-orm/pg-core';
 import { auditFields } from '@api/db/auditFields';
 
-export const chatUserTable = pgTable('chatUser', {
+export const chatUserTable = pgTable('chat_user', {
 	email: text().notNull().primaryKey(),
 	name: text().notNull(),
 	...auditFields,

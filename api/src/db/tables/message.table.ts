@@ -5,7 +5,7 @@ import { auditFields } from '@api/db/auditFields';
 
 export const messageTable = pgTable('message', {
 	id: uuid().primaryKey().defaultRandom(),
-	conversationId: text()
+	conversationId: uuid()
 		.notNull()
 		.references(() => conversationTable.id),
 	type: text().notNull().$type<MessageType>(),

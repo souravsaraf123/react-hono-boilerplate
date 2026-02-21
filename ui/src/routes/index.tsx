@@ -1,7 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { Plus, MessageSquare, Send } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
+import { MessageSquare, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Sidebar } from '@/components/Sidebar';
 import { useState } from 'react';
 
 export const Route = createFileRoute('/')({
@@ -33,27 +34,7 @@ export const Route = createFileRoute('/')({
 		return (
 			<div className="bg-background grid h-screen grid-cols-1 md:grid-cols-[280px_1fr]">
 				{/* Sidebar */}
-				<aside className="border-border bg-muted/30 hidden flex-col gap-4 border-r p-4 md:flex">
-					<Button
-						variant="default"
-						className="w-full justify-start gap-2"
-						onClick={() =>
-						{
-							// TODO: Add functionality later
-							console.log('New Chat clicked');
-						}}>
-						<Plus className="size-4" />
-						New Chat
-					</Button>
-
-					<div className="flex flex-col gap-2">
-						<h2 className="text-muted-foreground px-2 text-sm font-semibold">Your Chats</h2>
-						<div className="flex flex-col gap-1">
-							{/* Placeholder for chat list - will be populated later */}
-							<div className="text-muted-foreground px-2 py-2 text-sm">No chats yet</div>
-						</div>
-					</div>
-				</aside>
+				<Sidebar />
 
 				{/* Main Content */}
 				<main className="flex h-full items-center justify-center">

@@ -35,7 +35,7 @@ let baseApi = app
 	// Base path
 	.basePath('/api/v1')
 	// Auth routes
-	.route('/userMgmt', chatRouter);
+	.route('/chatmgmt', chatRouter);
 
 // 404 Not Found
 app.notFound(ctx =>

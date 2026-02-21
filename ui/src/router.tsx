@@ -6,7 +6,7 @@ import { routeTree } from './routeTree.gen';
 // Create a new router instance
 export const router = createRouter({
 	routeTree,
-	defaultPendingMs: 0,
+	defaultPendingMs: 300, // Only show loader if navigation takes longer than 300ms
 	defaultPendingComponent: DisplayLoader,
 	defaultErrorComponent: props => <DisplayError title={props.error.name} message={props.error.message} />,
 });

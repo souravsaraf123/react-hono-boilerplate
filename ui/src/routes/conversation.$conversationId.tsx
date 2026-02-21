@@ -1,3 +1,4 @@
+import { MessageRole, MessageType } from '@api/shared/zod/chat.schema';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { Conversation, Message } from '@api/shared/dbTypes';
 import { createFileRoute } from '@tanstack/react-router';
@@ -5,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Sidebar } from '@/components/Sidebar';
-import { Send } from 'lucide-react';
+import { Send, Loader2 } from 'lucide-react';
 import { api } from '@/lib/api';
 
 type ConversationData = {
@@ -82,36 +83,89 @@ function ConversationPage()
 			return;
 		}
 
+		const userMessageText = message.trim();
+		const queryKey = ['conversation', conversationId];
+		const currentData = conversationData;
+
+		// Clear textarea immediately
+		setMessage('');
 		setIsSubmitting(true);
+
+		// Create optimistic user message
+		const tempUserMessageId = `temp-user-${Date.now()}`;
+		const tempAssistantMessageId = `temp-assistant-${Date.now()}`;
+		const now = Date.now();
+
+		const optimisticUserMessage: Message = {
+			id: tempUserMessageId,
+			conversationId,
+			role: MessageRole.user,
+			type: MessageType.text,
+			content: userMessageText,
+			createdAt: now,
+			createdBy: 'user',
+			updatedAt: now,
+			updatedBy: 'user',
+		} as Message;
+
+		const optimisticAssistantMessage: Message = {
+			id: tempAssistantMessageId,
+			conversationId,
+			role: MessageRole.assistant,
+			type: MessageType.text,
+			content: 'Thinking...',
+			createdAt: now,
+			createdBy: 'system',
+			updatedAt: now,
+			updatedBy: 'system',
+		} as Message;
+
+		// Optimistically update the cache with user message and loading indicator
+		if (currentData)
+		{
+			queryClient.setQueryData(queryKey, {
+				...currentData,
+				messages: [...currentData.messages, optimisticUserMessage, optimisticAssistantMessage],
+			});
+		}
+
 		try
 		{
 			// Send message
 			const textChatResponse = await api.chatmgmt.textChat.$post({
 				json: {
 					conversationId,
-					userPrompt: message.trim(),
+					userPrompt: userMessageText,
 				},
 			});
 			const textChatData = await textChatResponse.json();
 			const { userMessage, assistantMessage } = textChatData.data;
 
-			// Update React Query cache with new messages
-			const queryKey = ['conversation', conversationId];
-			const currentData = conversationData;
+			// Replace optimistic messages with real ones
 			if (currentData)
 			{
-				// Use setQueryData to update the cache
+				// Remove temporary messages and add real ones
+				const messagesWithoutTemp = currentData.messages.filter(msg => msg.id !== tempUserMessageId && msg.id !== tempAssistantMessageId);
 				queryClient.setQueryData(queryKey, {
 					...currentData,
-					messages: [...currentData.messages, userMessage, assistantMessage],
+					messages: [...messagesWithoutTemp, userMessage, assistantMessage],
 				});
 			}
-
-			setMessage('');
 		}
 		catch (error)
 		{
 			console.error('Error sending message:', error);
+			// Remove optimistic messages on error
+			if (currentData)
+			{
+				const messagesWithoutTemp = currentData.messages.filter(msg => msg.id !== tempUserMessageId && msg.id !== tempAssistantMessageId);
+				queryClient.setQueryData(queryKey, {
+					...currentData,
+					messages: messagesWithoutTemp,
+				});
+				// Restore the message text so user can retry
+				setMessage(userMessageText);
+			}
 		}
 		finally
 		{
@@ -171,13 +225,25 @@ function ConversationPage()
 								No messages yet. Start the conversation!
 							</div>
 						)}
-						{messages.map((msg: Message) => (
-							<div key={msg.id} className={`flex gap-4 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-								<div className={`max-w-[85%] rounded-2xl px-4 py-3 ${msg.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
-									<div className="text-sm leading-relaxed break-words whitespace-pre-wrap">{msg.content}</div>
+						{messages.map((msg: Message) =>
+						{
+							const isLoading = msg.id.startsWith('temp-assistant-');
+							return (
+								<div key={msg.id} className={`flex gap-4 ${msg.role === MessageRole.user ? 'justify-end' : 'justify-start'}`}>
+									<div
+										className={`max-w-[85%] rounded-2xl px-4 py-3 ${msg.role === MessageRole.user ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
+										{isLoading ? (
+											<div className="flex items-center gap-2">
+												<Loader2 className="h-4 w-4 animate-spin" />
+												<span className="text-muted-foreground text-sm">Thinking...</span>
+											</div>
+										) : (
+											<div className="text-sm leading-relaxed break-words whitespace-pre-wrap">{msg.content}</div>
+										)}
+									</div>
 								</div>
-							</div>
-						))}
+							);
+						})}
 						<div ref={messagesEndRef} />
 					</div>
 				</div>
@@ -194,6 +260,7 @@ function ConversationPage()
 									placeholder="Type your message here... (Press Enter to send, Shift+Enter for new line)"
 									className="max-h-[200px] min-h-[80px] resize-none pr-12 md:min-h-[100px]"
 									rows={1}
+									disabled={isSubmitting}
 								/>
 							</div>
 							<Button

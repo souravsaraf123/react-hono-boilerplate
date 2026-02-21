@@ -1,6 +1,6 @@
 import { zValidator as zv } from '@hono/zod-validator';
 import type { ValidationTargets } from 'hono';
-import { ZodSchema } from 'zod';
+import type { ZodSchema } from 'zod';
 
 export const customZodValidator = <T extends ZodSchema, Target extends keyof ValidationTargets>(target: Target, schema: T) =>
 	zv(target, schema, (result, c) =>

@@ -1,8 +1,8 @@
-import { Content, GoogleGenAI, Modality } from '@google/genai';
+import { type Content, GoogleGenAI, Modality } from '@google/genai';
+import { generateText, Output, type ModelMessage } from 'ai';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
-import { generateText, Output, ModelMessage } from 'ai';
 import { apiEnv } from '@api/config/apiEnv';
-import { ZodSchema } from 'zod';
+import type { ZodSchema } from 'zod';
 
 type GoogleGenAiModelMessage = {
 	role: 'user' | 'assistant' | 'system';

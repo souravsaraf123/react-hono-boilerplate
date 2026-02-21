@@ -3,7 +3,7 @@ import { conversationTable } from '@api/db/tables/conversation.table';
 import { messageTable } from '@api/db/tables/message.table';
 import { aiService } from '@api/services/ai.service';
 import { db } from '@api/db/connection';
-import { ModelMessage } from 'ai';
+import type { ModelMessage } from 'ai';
 import { eq } from 'drizzle-orm';
 
 export async function textChat(conversationId: string, userPrompt: string) {

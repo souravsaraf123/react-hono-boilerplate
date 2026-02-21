@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { api } from '@/lib/api';
+import { router } from '@/router';
 
 export function Sidebar()
 {
@@ -26,8 +27,9 @@ export function Sidebar()
 				className="w-full justify-start gap-2"
 				onClick={() =>
 				{
-					// TODO: Add functionality later
-					console.log('New Chat clicked');
+					router.navigate({
+						to: '/',
+					});
 				}}>
 				<Plus className="size-4" />
 				New Chat

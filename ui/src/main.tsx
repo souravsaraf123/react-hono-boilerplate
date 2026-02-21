@@ -13,7 +13,19 @@ export const queryClient = new QueryClient({
 	},
 });
 
-createRoot(document.getElementById('root')!).render(
+const rootElement = document.getElementById('root');
+if (!rootElement) {
+	throw new Error('Root element not found');
+}
+
+// For HMR, reuse existing root if available
+let root = (rootElement as any)._reactRootContainer;
+if (!root) {
+	root = createRoot(rootElement);
+	(rootElement as any)._reactRootContainer = root;
+}
+
+root.render(
 	<StrictMode>
 		<QueryClientProvider client={queryClient}>
 			<RouterProvider router={router} />

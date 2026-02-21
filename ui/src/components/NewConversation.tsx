@@ -1,9 +1,9 @@
 import { MessageSquare, Send, Loader2 } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { queryClient } from '@/main';
 import { router } from '@/router';
-import { useState } from 'react';
 import { api } from '@/lib/api';
 
 export function NewConversation()
@@ -11,11 +11,21 @@ export function NewConversation()
 	const [message, setMessage] = useState('');
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [submittedMessage, setSubmittedMessage] = useState<string | null>(null);
+	const isNavigatingRef = useRef(false);
+	const isMountedRef = useRef(true);
+
+	useEffect(() =>
+	{
+		return () =>
+		{
+			isMountedRef.current = false;
+		};
+	}, []);
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) =>
 	{
 		e.preventDefault();
-		if (!message.trim() || isSubmitting)
+		if (!message.trim() || isSubmitting || isNavigatingRef.current)
 		{
 			return;
 		}
@@ -52,24 +62,26 @@ export function NewConversation()
 			});
 
 			// Step 4: Navigate to conversation page
-			// Use router.navigate for more reliable navigation
-			await router.navigate({
+			// Mark that we're navigating to prevent state updates
+			isNavigatingRef.current = true;
+
+			// Navigate without replace to avoid route matching issues
+			router.navigate({
 				to: '/conversation/$conversationId',
 				params: { conversationId },
-				replace: true,
 			});
 		}
 		catch (error)
 		{
 			console.error('Error creating conversation:', error);
 			// Restore the message text so user can retry
-			setMessage(userMessageText);
-			setSubmittedMessage(null);
+			if (!isNavigatingRef.current && isMountedRef.current)
+			{
+				setMessage(userMessageText);
+				setSubmittedMessage(null);
+				setIsSubmitting(false);
+			}
 			// TODO: Show error message to user
-		}
-		finally
-		{
-			setIsSubmitting(false);
 		}
 	};
 

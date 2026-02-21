@@ -26,7 +26,7 @@ export const chatRouter = new Hono()
 	})
 	.get('/getConversationById/:conversationId', customZodValidator('param', conversationIdSchema), async c =>
 	{
-		const conversationId = c.req.param('conversationId');
+		const { conversationId } = c.req.valid('param');
 		const response = await getConversationById(conversationId);
 		return c.json({ data: response });
 	});

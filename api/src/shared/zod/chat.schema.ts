@@ -45,4 +45,6 @@ export const userMessageInputSchema = z.object({
 });
 export type UserMessageInput = z.infer<typeof userMessageInputSchema>;
 
-export const conversationIdSchema = z.string();
+export const conversationIdSchema = z.object({
+	conversationId: z.string().uuid(),
+});

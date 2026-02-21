@@ -3,19 +3,67 @@ import { Textarea } from '@/components/ui/textarea';
 import { MessageSquare, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sidebar } from '@/components/Sidebar';
+import { queryClient } from '@/main';
+import { router } from '@/router';
 import { useState } from 'react';
+import { api } from '@/lib/api';
 
 export const Route = createFileRoute('/')({
 	component: () =>
 	{
 		const [message, setMessage] = useState('');
+		const [isSubmitting, setIsSubmitting] = useState(false);
 
-		const handleSubmit = (e: React.FormEvent<HTMLFormElement>) =>
+		const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) =>
 		{
 			e.preventDefault();
-			// TODO: Add API call later
-			console.log('Message:', message);
-			setMessage('');
+			if (!message.trim() || isSubmitting)
+			{
+				return;
+			}
+
+			setIsSubmitting(true);
+			try
+			{
+				// Step 1: Create conversation
+				const createConvResponse = await api.chatmgmt.createConversation.$post();
+				const createConvData = await createConvResponse.json();
+				const conversationId = createConvData.data.id;
+
+				// Step 2: Send the first message
+				const textChatResponse = await api.chatmgmt.textChat.$post({
+					json: {
+						conversationId,
+						userPrompt: message.trim(),
+					},
+				});
+				const textChatData = await textChatResponse.json();
+				const { userMessage, assistantMessage } = textChatData.data;
+
+				// Step 3: Inject messages into React Query cache
+				const queryKey = ['conversation', conversationId];
+				queryClient.setQueryData(queryKey, {
+					conversation: createConvData.data,
+					messages: [userMessage, assistantMessage],
+				});
+
+				// Step 4: Navigate to conversation page
+				// Use router.navigate for more reliable navigation
+				await router.navigate({
+					to: '/conversation/$conversationId',
+					params: { conversationId },
+					replace: true,
+				});
+			}
+			catch (error)
+			{
+				console.error('Error creating conversation:', error);
+				// TODO: Show error message to user
+			}
+			finally
+			{
+				setIsSubmitting(false);
+			}
 		};
 
 		const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) =>
@@ -59,7 +107,11 @@ export const Route = createFileRoute('/')({
 										rows={1}
 									/>
 								</div>
-								<Button type="submit" size="icon" className="h-[50px] w-[50px] shrink-0 md:h-[55px] md:w-[55px]" disabled={!message.trim()}>
+								<Button
+									type="submit"
+									size="icon"
+									className="h-[50px] w-[50px] shrink-0 md:h-[55px] md:w-[55px]"
+									disabled={!message.trim() || isSubmitting}>
 									<Send className="size-4 md:size-5" />
 									<span className="sr-only">Send message</span>
 								</Button>

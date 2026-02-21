@@ -1,4 +1,4 @@
-import { userRouter } from '@api/routes/user.routes';
+import { chatRouter } from '@api/routes/chat.routes';
 import { rateLimiter } from 'hono-rate-limiter';
 import { compress } from 'hono/compress';
 import { logger } from 'hono/logger';
@@ -35,7 +35,7 @@ let baseApi = app
 	// Base path
 	.basePath('/api/v1')
 	// Auth routes
-	.route('/userMgmt', userRouter);
+	.route('/userMgmt', chatRouter);
 
 // 404 Not Found
 app.notFound(ctx =>

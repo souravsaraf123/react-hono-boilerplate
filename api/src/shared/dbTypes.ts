@@ -1,4 +1,8 @@
-import { userTable } from '@api/db/tables/user';
+import { conversationTable } from '@api/db/tables/conversation.table';
+import { chatUserTable } from '@api/db/tables/chatUser.table';
 
-export type User = typeof userTable.$inferSelect;
-export type NewUser = typeof userTable.$inferInsert;
+export type Conversation = typeof conversationTable.$inferSelect;
+export type NewConversation = typeof conversationTable.$inferInsert;
+
+export type ChatUser = typeof chatUserTable.$inferSelect;
+export type NewChatUser = typeof chatUserTable.$inferInsert;

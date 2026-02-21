@@ -14,6 +14,7 @@ export const envSchema = z.object({
 	DB_NAME: z.string(),
 	DB_SCHEMA: z.string(),
 	API_PORT: z.coerce.number(),
+	AI_API_KEY: z.string(),
 });
 
 const { data, error } = envSchema.safeParse(process.env);

@@ -1,5 +1,5 @@
+import { chatUserTable } from '@api/db/tables/chatUser.table';
 import { closeDb, db } from '@api/db/connection';
-import { userTable } from '@api/db/tables/user';
 
 async function main()
 {
@@ -14,8 +14,8 @@ async function main()
 		},
 	];
 
-	await db.insert(userTable).values(users);
-	console.log('Users seeded successfully');
+	await db.insert(chatUserTable).values(users);
+	console.log('Chat Users seeded successfully');
 
 	await closeDb();
 }

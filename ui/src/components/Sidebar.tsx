@@ -32,7 +32,7 @@ export function Sidebar()
 	return (
 		<aside className="border-border bg-muted/30 hidden flex-col gap-4 border-r p-4 md:flex">
 			<Button
-				variant="default"
+				variant="outline-primary"
 				className="w-full justify-start gap-2"
 				onClick={() =>
 				{

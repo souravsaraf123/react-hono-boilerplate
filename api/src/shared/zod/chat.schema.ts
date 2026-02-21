@@ -44,3 +44,5 @@ export const userMessageInputSchema = z.object({
 	userPrompt: z.string().min(1),
 });
 export type UserMessageInput = z.infer<typeof userMessageInputSchema>;
+
+export const conversationIdSchema = z.string();

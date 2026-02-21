@@ -61,6 +61,19 @@ export function NewConversation()
 				messages: [userMessage, assistantMessage],
 			});
 
+			// Step 3.5: Add new conversation to the conversations list cache
+			const conversationsQueryKey = ['conversations'];
+			const currentConversations = queryClient.getQueryData<(typeof createConvData.data)[]>(conversationsQueryKey);
+			if (currentConversations)
+			{
+				// Add the new conversation at the beginning (most recent first)
+				// Check if it doesn't already exist to avoid duplicates
+				if (!currentConversations.some(conv => conv.id === conversationId))
+				{
+					queryClient.setQueryData(conversationsQueryKey, [createConvData.data, ...currentConversations]);
+				}
+			}
+
 			// Step 4: Navigate to conversation page
 			// Mark that we're navigating to prevent state updates
 			isNavigatingRef.current = true;
